@@ -49,3 +49,11 @@ func ValidateToken(tokenJWT string) (jwt.MapClaims, error) {
 
 	return claims, nil
 }
+
+func AssertTypeClaims(claims interface{}) (jwt.MapClaims, error) {
+	claimsMap, ok := claims.(jwt.MapClaims)
+	if !ok {
+		return nil, fmt.Errorf("format claims tidak valid")
+	}
+	return claimsMap, nil
+}

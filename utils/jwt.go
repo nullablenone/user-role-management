@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"manajemen-user/config"
 	"time"
 
@@ -25,4 +26,26 @@ func GenerateToken(userID uint, role string) (string, error) {
 	}
 
 	return SignedToken, nil
+}
+
+func ValidateToken(tokenJWT string) (jwt.MapClaims, error) {
+	token, err := jwt.Parse(tokenJWT, func(t *jwt.Token) (interface{}, error) {
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("method tanda tangan tidak valid")
+		}
+		return []byte(config.Env.SecretKey), nil
+	})
+
+	// cek token valid
+	if err != nil || !token.Valid {
+		return nil, fmt.Errorf("token tidak valid")
+	}
+
+	// ambil claims
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return nil, fmt.Errorf("gagal mendapatkan claims")
+	}
+
+	return claims, nil
 }

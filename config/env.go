@@ -14,6 +14,7 @@ type ENV struct {
 	DBName    string
 	DBPort    string
 	DBSSLMode string
+	SecretKey string
 }
 
 var Env ENV
@@ -31,6 +32,7 @@ func LoadENV() {
 		DBName:    os.Getenv("DB_NAME"),
 		DBPort:    os.Getenv("DB_PORT"),
 		DBSSLMode: os.Getenv("DB_SSLMODE"),
+		SecretKey: os.Getenv("SecretKey"),
 	}
 
 }

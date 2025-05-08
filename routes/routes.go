@@ -11,6 +11,7 @@ func SetupRoutes(db *gorm.DB) *gin.Engine {
 	router := gin.Default()
 	router.GET("/user", controllers.Test)
 	router.POST("/register", controllers.Register(db))
+	router.POST("/login", controllers.Login(db))
 
 	return router
 }

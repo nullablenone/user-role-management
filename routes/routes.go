@@ -16,7 +16,10 @@ func SetupRoutes(db *gorm.DB) *gin.Engine {
 
 	admin := router.Group("/admin", middlewares.JWTMiddleware())
 	admin.GET("/users", controllers.GetUsers(db))
-	// admin.POST("/users/create", controllers.CreateUsers(db))
+	admin.GET("/users/:id", controllers.GetUsersByID(db))
+	admin.POST("/users", controllers.CreateUsers(db))
+	admin.PUT("/users/:id", controllers.UpdateUsers(db))
+	admin.DELETE("/users/:id", controllers.DeleteUsers(db))
 
 	return router
 }

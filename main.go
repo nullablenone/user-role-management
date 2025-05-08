@@ -1,14 +1,20 @@
 package main
 
 import (
+	"log"
 	"manajemen-user/config"
+	"manajemen-user/models"
 	"manajemen-user/routes"
 )
 
 func main() {
 	config.LoadENV()
-	config.ConnectDB()
+	db := config.ConnectDB()
+	if err := db.AutoMigrate(&models.User{}); err != nil {
+		log.Fatal(err)
+		return
+	}
 
-	router := routes.SetupRoutes()
+	router := routes.SetupRoutes(db)
 	router.Run(":8080")
 }

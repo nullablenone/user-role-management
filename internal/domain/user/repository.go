@@ -10,6 +10,7 @@ type Repository interface {
 	CreateUsers(user *User) error
 	SaveUsers(user *User) error
 	DeleteUsers(user *User) error
+	FindByEmailWithRole(email string) (*User, error)
 }
 
 type repository struct {
@@ -45,4 +46,12 @@ func (r *repository) SaveUsers(user *User) error {
 
 func (r *repository) DeleteUsers(user *User) error {
 	return r.DB.Delete(user).Error
+}
+
+func (r *repository) FindByEmailWithRole(email string) (*User, error) {
+	var user User
+	if err := r.DB.Preload("Role").Where("email = ?", email).First(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
 }

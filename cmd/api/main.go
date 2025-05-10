@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"manajemen-user/config"
 	"manajemen-user/internal/domain/role"
 	"manajemen-user/internal/domain/user"
@@ -13,9 +14,10 @@ func main() {
 	// Connect DB
 	db := config.ConnectDB()
 	// Migrate Table
-	db.AutoMigrate(role.Role{})
-	db.AutoMigrate(user.User{})
-
+	err := db.AutoMigrate(role.Role{}, user.User{})
+	if err != nil {
+		log.Fatal(err)
+	}
 	// Set Repo
 	userRepo := user.NewRepository(db)
 	roleRepo := role.NewRepository(db)

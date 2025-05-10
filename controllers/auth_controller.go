@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"manajemen-user/models"
+	"manajemen-user/internal/domain/user"
 	"manajemen-user/utils"
 	"net/http"
 
@@ -35,7 +35,7 @@ func Register(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		user := models.User{
+		user := user.User{
 			Name:     RegisterRequest.Name,
 			Email:    RegisterRequest.Email,
 			Password: string(password),
@@ -70,8 +70,8 @@ func Login(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		var user models.User
-		if err = db.Where("email= ?", LoginRequest.Email).First(&user).Error; err != nil {
+		var user user.User
+		if err = db.Preload("Role").Where("email= ?", LoginRequest.Email).First(&user).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"error": err.Error(),
 			})
@@ -86,7 +86,7 @@ func Login(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		token, err := utils.GenerateToken(user.ID, user.Role)
+		token, err := utils.GenerateToken(user.ID, user.Role.Name)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"error": err.Error(),

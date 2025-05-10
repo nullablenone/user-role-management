@@ -48,7 +48,7 @@ func (s *service) ServiceCreateUsers(input CreateUsersRequest) (*User, error) {
 		Name:     input.Name,
 		Email:    input.Email,
 		Password: string(password),
-		Role:     input.Role,
+		RoleID:   input.RoleID,
 	}
 
 	err = s.Repo.CreateUsers(&user)
@@ -73,7 +73,7 @@ func (s *service) ServiceUpdateUsers(id string, input UpdateUsersRequest) (*User
 	user.Name = input.Name
 	user.Email = input.Email
 	user.Password = string(password)
-	user.Role = input.Role
+	user.RoleID = input.RoleID
 
 	err = s.Repo.SaveUsers(user)
 	if err != nil {

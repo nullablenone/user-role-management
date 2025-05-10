@@ -22,7 +22,7 @@ func NewRepository(db *gorm.DB) Repository {
 }
 
 func (r *repository) GetAllUsers(user []User) ([]User, error) {
-	if err := r.DB.Find(&user).Error; err != nil {
+	if err := r.DB.Preload("Role").Find(&user).Error; err != nil {
 		return nil, err
 	}
 	return user, nil
@@ -30,7 +30,7 @@ func (r *repository) GetAllUsers(user []User) ([]User, error) {
 
 func (r *repository) GetUsersByID(id string) (*User, error) {
 	var user User
-	if err := r.DB.Where("ID = ?", id).First(&user).Error; err != nil {
+	if err := r.DB.Preload("Role").Where("ID = ?", id).First(&user).Error; err != nil {
 		return nil, err
 	}
 	return &user, nil

@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"manajemen-user/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -19,25 +20,17 @@ func (h *Handler) Register(c *gin.Context) {
 
 	err := c.ShouldBindBodyWithJSON(&input)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		utils.RespondError(c, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
-	user, err := h.Service.ServiceRegister(input)
+	_, err = h.Service.ServiceRegister(input)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		utils.RespondError(c, http.StatusBadRequest, "Failed to register user")
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
-		"message": "User registered successfully",
-		"user":    user,
-	})
-
+	utils.RespondSuccess(c, nil, "User registered successfully")
 }
 
 func (h *Handler) Login(c *gin.Context) {
@@ -45,22 +38,15 @@ func (h *Handler) Login(c *gin.Context) {
 
 	err := c.ShouldBindBodyWithJSON(&input)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		utils.RespondError(c, http.StatusBadRequest, "Invalid login payload")
 		return
 	}
 
 	token, err := h.Service.ServiceLogin(input)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		utils.RespondError(c, http.StatusUnauthorized, "Invalid email or password")
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
-		"message": "Login successfully",
-		"token":   token,
-	})
+	utils.RespondSuccess(c, gin.H{"token": token}, "Login successful")
 }

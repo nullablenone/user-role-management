@@ -1,6 +1,7 @@
 package role
 
 import (
+	"manajemen-user/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -17,31 +18,22 @@ func NewHandler(service Service) *Handler {
 func (h *Handler) GetRoles(c *gin.Context) {
 	roles, err := h.Service.ServiceGetRoles()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		utils.RespondError(c, http.StatusInternalServerError, "Failed to fetch roles")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"roles": roles,
-	})
+	utils.RespondSuccess(c, roles, "Roles fetched successfully")
 }
 
 func (h *Handler) GetRolesByID(c *gin.Context) {
 	id := c.Param("id")
 	role, err := h.Service.ServiceGetRolesByID(id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		utils.RespondError(c, http.StatusNotFound, "Role not found")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"role": role,
-	})
-
+	utils.RespondSuccess(c, role, "Role fetched successfully")
 }
 
 func (h *Handler) CreateRoles(c *gin.Context) {
@@ -49,24 +41,17 @@ func (h *Handler) CreateRoles(c *gin.Context) {
 
 	err := c.ShouldBindBodyWithJSON(&input)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		utils.RespondError(c, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	role, err := h.Service.ServiceCreateRoles(input)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		utils.RespondError(c, http.StatusInternalServerError, "Failed to create role")
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
-		"message": "Role created successfully",
-		"role":    role,
-	})
+	utils.RespondSuccess(c, role, "Role created successfully")
 }
 
 func (h *Handler) UpdateRoles(c *gin.Context) {
@@ -74,37 +59,26 @@ func (h *Handler) UpdateRoles(c *gin.Context) {
 	var input UpdateRolesRequest
 	err := c.ShouldBindBodyWithJSON(&input)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		utils.RespondError(c, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	role, err := h.Service.ServiceUpdateRoles(id, input)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		utils.RespondError(c, http.StatusInternalServerError, "Failed to update role")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Role Update successfully",
-		"role":    role,
-	})
+	utils.RespondSuccess(c, role, "Role updated successfully")
 }
 
 func (h *Handler) DeleteRoles(c *gin.Context) {
 	id := c.Param("id")
 	err := h.Service.ServiceDeleteRoles(id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		utils.RespondError(c, http.StatusInternalServerError, "Failed to delete role")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"message": "User Delete successfully",
-	})
+	utils.RespondSuccess(c, nil, "Role deleted successfully")
 }

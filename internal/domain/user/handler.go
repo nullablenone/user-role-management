@@ -1,6 +1,7 @@
 package user
 
 import (
+	"manajemen-user/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -17,30 +18,22 @@ func NewHandler(service Service) *Handler {
 func (h *Handler) GetUsers(c *gin.Context) {
 	users, err := h.Service.ServiceGetUsers()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		utils.RespondError(c, http.StatusInternalServerError, "Failed to fetch users")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"users": users,
-	})
+	utils.RespondSuccess(c, users, "Users fetched successfully")
 }
 
 func (h *Handler) GetUsersByID(c *gin.Context) {
 	id := c.Param("id")
 	user, err := h.Service.ServiceGetUsersByID(id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		utils.RespondError(c, http.StatusNotFound, "User not found")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"user": user,
-	})
+	utils.RespondSuccess(c, user, "User fetched successfully")
 
 }
 
@@ -49,24 +42,17 @@ func (h *Handler) CreateUsers(c *gin.Context) {
 
 	err := c.ShouldBindBodyWithJSON(&input)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		utils.RespondError(c, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	user, err := h.Service.ServiceCreateUsers(input)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		utils.RespondError(c, http.StatusInternalServerError, "Failed to create user")
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
-		"message": "User created successfully",
-		"user":    user,
-	})
+	utils.RespondSuccess(c, user, "User created successfully")
 }
 
 func (h *Handler) UpdateUsers(c *gin.Context) {
@@ -74,37 +60,25 @@ func (h *Handler) UpdateUsers(c *gin.Context) {
 	var input UpdateUsersRequest
 	err := c.ShouldBindBodyWithJSON(&input)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		utils.RespondError(c, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	user, err := h.Service.ServiceUpdateUsers(id, input)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		utils.RespondError(c, http.StatusInternalServerError, "Failed to update user")
 		return
 	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"message": "User Update successfully",
-		"user":    user,
-	})
+	utils.RespondSuccess(c, user, "User updated successfully")
 }
 
 func (h *Handler) DeleteUsers(c *gin.Context) {
 	id := c.Param("id")
 	err := h.Service.ServiceDeleteUsers(id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		utils.RespondError(c, http.StatusInternalServerError, "Failed to delete user")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"message": "User Delete successfully",
-	})
+	utils.RespondSuccess(c, nil, "User deleted successfully")
 }

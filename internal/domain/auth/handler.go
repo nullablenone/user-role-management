@@ -52,6 +52,12 @@ func (h *Handler) Login(c *gin.Context) {
 	}
 
 	token, err := h.Service.ServiceLogin(input)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "Login successfully",

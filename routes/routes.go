@@ -1,20 +1,18 @@
 package routes
 
 import (
-	"manajemen-user/controllers"
+	"manajemen-user/internal/domain/auth"
 	"manajemen-user/internal/domain/role"
 	"manajemen-user/internal/domain/user"
 	"manajemen-user/middlewares"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
-func SetupRoutes(db *gorm.DB, userHandler *user.Handler, roleHandler *role.Handler) *gin.Engine {
+func SetupRoutes(authHandler *auth.Handler, userHandler *user.Handler, roleHandler *role.Handler) *gin.Engine {
 	router := gin.Default()
-	router.GET("/user", controllers.Test)
-	router.POST("/register", controllers.Register(db))
-	router.POST("/login", controllers.Login(db))
+	router.POST("/register", authHandler.Register)
+	router.POST("/login", authHandler.Login)
 
 	admin := router.Group("/admin", middlewares.JWTMiddleware(), middlewares.RequireRole("admin"))
 	admin.GET("/users", userHandler.GetUsers)

@@ -1,7 +1,7 @@
 package user
 
 import (
-	"golang.org/x/crypto/bcrypt"
+	"manajemen-user/utils"
 )
 
 type Service interface {
@@ -39,7 +39,7 @@ func (s *service) ServiceGetUsersByID(id string) (*User, error) {
 
 func (s *service) ServiceCreateUsers(input CreateUsersRequest) (*User, error) {
 
-	password, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
+	password, err := utils.HashedPassword(input.Password)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func (s *service) ServiceCreateUsers(input CreateUsersRequest) (*User, error) {
 	user := User{
 		Name:     input.Name,
 		Email:    input.Email,
-		Password: string(password),
+		Password: password,
 		RoleID:   input.RoleID,
 	}
 
@@ -65,14 +65,14 @@ func (s *service) ServiceUpdateUsers(id string, input UpdateUsersRequest) (*User
 		return nil, err
 	}
 
-	password, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
+	password, err := utils.HashedPassword(input.Password)
 	if err != nil {
 		return nil, err
 	}
 
 	user.Name = input.Name
 	user.Email = input.Email
-	user.Password = string(password)
+	user.Password = password
 	user.RoleID = input.RoleID
 
 	err = s.Repo.SaveUsers(user)

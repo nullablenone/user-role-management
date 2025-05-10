@@ -3,8 +3,6 @@ package auth
 import (
 	"manajemen-user/internal/domain/user"
 	"manajemen-user/utils"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 type Service interface {
@@ -22,7 +20,7 @@ func NewService(repo user.Repository) Service {
 
 func (s *service) ServiceRegister(input RegisterRequest) (*user.User, error) {
 
-	password, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
+	password, err := utils.HashedPassword(input.Password)
 	if err != nil {
 		return nil, err
 	}
@@ -30,7 +28,7 @@ func (s *service) ServiceRegister(input RegisterRequest) (*user.User, error) {
 	user := user.User{
 		Name:     input.Name,
 		Email:    input.Email,
-		Password: string(password),
+		Password: password,
 	}
 
 	err = s.Repo.CreateUsers(&user)
@@ -47,7 +45,7 @@ func (s *service) ServiceLogin(input LoginRequest) (string, error) {
 		return "", err
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password))
+	err = utils.CheckPasswordHash(user.Password, input.Password)
 	if err != nil {
 		return "", err
 	}

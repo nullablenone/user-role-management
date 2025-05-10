@@ -16,7 +16,7 @@ func SetupRoutes(db *gorm.DB, userHandler *user.Handler, roleHandler *role.Handl
 	router.POST("/register", controllers.Register(db))
 	router.POST("/login", controllers.Login(db))
 
-	admin := router.Group("/admin", middlewares.JWTMiddleware())
+	admin := router.Group("/admin", middlewares.JWTMiddleware(), middlewares.RequireRole("admin"))
 	admin.GET("/users", userHandler.GetUsers)
 	admin.GET("/users/:id", userHandler.GetUsersByID)
 	admin.POST("/users", userHandler.CreateUsers)

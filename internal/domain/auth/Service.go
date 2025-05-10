@@ -52,7 +52,7 @@ func (s *service) ServiceLogin(input LoginRequest) (string, error) {
 
 	token, err := utils.GenerateToken(user.ID, user.Role.Name)
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 
 	return token, nil

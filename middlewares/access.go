@@ -1,45 +1,38 @@
 package middlewares
 
 import (
+	"fmt"
+	"manajemen-user/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 )
 
 func RequireRole(expectedRole string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		mapClaims, exists := c.Get("claims")
 		if !exists {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"error": "gagal mengambil claims",
-			})
+			utils.RespondError(c, http.StatusUnauthorized, "RequireRole: failed to take claims")
 			c.Abort()
 			return
 		}
 
-		claims, ok := mapClaims.(jwt.MapClaims)
-		if !ok {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"error": "gagal invalid token claims",
-			})
+		claims, err := utils.AssertTypeClaims(mapClaims)
+		if err != nil {
+			utils.RespondError(c, http.StatusUnauthorized, fmt.Sprintf("RequireRole: %v", err))
 			c.Abort()
 			return
 		}
 
 		role, ok := claims["role"].(string)
 		if !ok {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"error": "tidak menemukan role",
-			})
+			utils.RespondError(c, http.StatusUnauthorized, "RequireRole: did not find role")
 			c.Abort()
 			return
 		}
 
 		if role != expectedRole {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"error": "akses di tolak",
-			})
+			utils.RespondError(c, http.StatusUnauthorized, "RequireRole: access denied")
 			c.Abort()
 			return
 		}

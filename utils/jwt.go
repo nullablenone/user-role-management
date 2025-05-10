@@ -12,13 +12,11 @@ func GenerateToken(userID uint, role string) (string, error) {
 	claims := jwt.MapClaims{
 		"user_id": userID,
 		"role":    role,
-		"exp":     time.Now().Add(24 * time.Hour).Unix(), // Valid 1 hari
+		"exp":     time.Now().Add(24 * time.Hour).Unix(),
 	}
 
-	// Membuat Token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	// Tanda tangani Token
 	SignedToken, err := token.SignedString([]byte(config.Env.SecretKey))
 
 	if err != nil {
@@ -31,29 +29,27 @@ func GenerateToken(userID uint, role string) (string, error) {
 func ValidateToken(tokenJWT string) (jwt.MapClaims, error) {
 	token, err := jwt.Parse(tokenJWT, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("method tanda tangan tidak valid")
+			return nil, fmt.Errorf("ValidateToken: invalid signature method")
 		}
 		return []byte(config.Env.SecretKey), nil
 	})
 
-	// cek token valid
 	if err != nil || !token.Valid {
-		return nil, fmt.Errorf("token tidak valid")
+		return nil, fmt.Errorf("ValidateToken: invalid token")
 	}
 
-	// ambil claims
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		return nil, fmt.Errorf("gagal mendapatkan claims")
+		return nil, fmt.Errorf("ValidateToken: failed to get claims")
 	}
 
 	return claims, nil
 }
 
-func AssertTypeClaims(claims interface{}) (jwt.MapClaims, error) {
+func AssertTypeClaims(claims any) (jwt.MapClaims, error) {
 	claimsMap, ok := claims.(jwt.MapClaims)
 	if !ok {
-		return nil, fmt.Errorf("format claims tidak valid")
+		return nil, fmt.Errorf("AssertTypeClaims: claims format is invalid")
 	}
 	return claimsMap, nil
 }

@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"fmt"
 	"manajemen-user/utils"
 	"net/http"
 	"strings"
@@ -13,17 +14,14 @@ func JWTMiddleware() gin.HandlerFunc {
 
 		tokenString := c.GetHeader("Authorization")
 		if tokenString == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"error": "token tidak boleh kosong",
-			})
+			utils.RespondError(c, http.StatusUnauthorized, "token cannot be empty")
 			c.Abort()
 			return
 		}
 
 		if !strings.HasPrefix(tokenString, "Bearer ") {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"error": "Format token tidak valid, harus diawali dengan 'Bearer '",
-			})
+			utils.RespondError(c, http.StatusUnauthorized, "invalid token format, must be started with 'Bearer '")
+
 			c.Abort()
 			return
 		}
@@ -32,9 +30,7 @@ func JWTMiddleware() gin.HandlerFunc {
 
 		claims, err := utils.ValidateToken(token)
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"error": err.Error(),
-			})
+			utils.RespondError(c, http.StatusUnauthorized, fmt.Sprintf("JWTMiddleware: %v", err))
 			c.Abort()
 			return
 		}

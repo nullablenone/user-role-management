@@ -14,6 +14,7 @@ type Service interface {
 	ServiceCreateUsers(input CreateUsersRequest) (*User, error)
 	ServiceUpdateUsers(id string, input UpdateUsersRequest) (*User, error)
 	ServiceDeleteUsers(id string) error
+	ServiceProfileUsers(id float64) (*User, error)
 }
 
 type service struct {
@@ -107,4 +108,16 @@ func (s *service) ServiceDeleteUsers(id string) error {
 	}
 
 	return nil
+}
+
+func (s *service) ServiceProfileUsers(id float64) (*User, error) {
+	str_id := fmt.Sprintf("%.0f", id)
+	user, err := s.Repo.GetUsersByID(str_id)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, fmt.Errorf("ServiceProfileUsers: user with ID %f not found: %w", id, err)
+		}
+		return nil, fmt.Errorf("ServiceProfileUsers: failed to get user: %w", err)
+	}
+	return user, nil
 }

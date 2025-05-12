@@ -2,6 +2,7 @@ package user
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"manajemen-user/utils"
 	"net/http"
@@ -101,4 +102,34 @@ func (h *Handler) DeleteUsers(c *gin.Context) {
 	}
 
 	utils.RespondSuccess(c, nil, "User deleted successfully")
+}
+
+func (h *Handler) Profile(c *gin.Context) {
+	mapClaims, exists := c.Get("claims")
+	if !exists {
+		utils.RespondError(c, http.StatusUnauthorized, "RequireRole: failed to take claims")
+		c.Abort()
+		return
+	}
+
+	claims, err := utils.AssertTypeClaims(mapClaims)
+	if err != nil {
+		utils.RespondError(c, http.StatusUnauthorized, fmt.Sprintf("RequireRole: %v", err))
+		c.Abort()
+		return
+	}
+
+	user_id := claims["user_id"].(float64)
+	user, err := h.Service.ServiceProfileUsers(user_id)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			utils.RespondError(c, http.StatusNotFound, "User not found")
+			return
+		}
+		log.Printf("Error in Profile: %v", err)
+		utils.RespondError(c, http.StatusNotFound, "User not found")
+		return
+	}
+
+	utils.RespondSuccess(c, user, "User fetched successfully")
 }

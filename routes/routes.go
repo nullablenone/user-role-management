@@ -27,5 +27,8 @@ func SetupRoutes(authHandler *auth.Handler, userHandler *user.Handler, roleHandl
 	admin.PUT("/roles/:id", roleHandler.UpdateRoles)
 	admin.DELETE("/roles/:id", roleHandler.DeleteRoles)
 
+	user := router.Group("/user", middlewares.JWTMiddleware())
+	user.GET("/profile", userHandler.Profile)
+
 	return router
 }

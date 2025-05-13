@@ -7,6 +7,7 @@ import (
 	"manajemen-user/internal/domain/role"
 	"manajemen-user/internal/domain/user"
 	"manajemen-user/routes"
+	"manajemen-user/seeders"
 )
 
 func main() {
@@ -19,6 +20,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// Call Seeder
+	seeders.SeedRole(db)
+	seeders.SeedUser(db)
 	// Set Repo
 	userRepo := user.NewRepository(db)
 	roleRepo := role.NewRepository(db)

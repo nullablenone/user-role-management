@@ -26,7 +26,18 @@ func (h *Handler) GetRoles(c *gin.Context) {
 		return
 	}
 
-	utils.RespondSuccess(c, roles, "Roles fetched successfully")
+	var response []ResponseRoles
+	for _, role := range roles {
+		response = append(response, ResponseRoles{
+			ID:          role.ID,
+			Name:        role.Name,
+			Deskription: role.Deskription,
+			CreatedAt:   role.CreatedAt,
+			UpdatedAt:   role.UpdatedAt,
+		})
+	}
+
+	utils.RespondSuccess(c, response, "Roles fetched successfully")
 }
 
 func (h *Handler) GetRolesByID(c *gin.Context) {
@@ -42,7 +53,15 @@ func (h *Handler) GetRolesByID(c *gin.Context) {
 		return
 	}
 
-	utils.RespondSuccess(c, role, "Role fetched successfully")
+	response := ResponseRoles{
+		ID:          role.ID,
+		Name:        role.Name,
+		Deskription: role.Deskription,
+		CreatedAt:   role.CreatedAt,
+		UpdatedAt:   role.UpdatedAt,
+	}
+
+	utils.RespondSuccess(c, response, "Role fetched successfully")
 }
 
 func (h *Handler) CreateRoles(c *gin.Context) {
@@ -61,7 +80,15 @@ func (h *Handler) CreateRoles(c *gin.Context) {
 		return
 	}
 
-	utils.RespondSuccess(c, role, "Role created successfully")
+	response := ResponseRoles{
+		ID:          role.ID,
+		Name:        role.Name,
+		Deskription: role.Deskription,
+		CreatedAt:   role.CreatedAt,
+		UpdatedAt:   role.UpdatedAt,
+	}
+
+	utils.RespondSuccess(c, response, "Role created successfully")
 }
 
 func (h *Handler) UpdateRoles(c *gin.Context) {
@@ -84,7 +111,15 @@ func (h *Handler) UpdateRoles(c *gin.Context) {
 		return
 	}
 
-	utils.RespondSuccess(c, role, "Role updated successfully")
+	response := ResponseRoles{
+		ID:          role.ID,
+		Name:        role.Name,
+		Deskription: role.Deskription,
+		CreatedAt:   role.CreatedAt,
+		UpdatedAt:   role.UpdatedAt,
+	}
+
+	utils.RespondSuccess(c, response, "Role updated successfully")
 }
 
 func (h *Handler) DeleteRoles(c *gin.Context) {

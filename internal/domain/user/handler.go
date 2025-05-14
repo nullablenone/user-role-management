@@ -27,7 +27,19 @@ func (h *Handler) GetUsers(c *gin.Context) {
 		return
 	}
 
-	utils.RespondSuccess(c, users, "Users fetched successfully")
+	var responese []ResponseUsers
+	for _, user := range users {
+		responese = append(responese, ResponseUsers{
+			ID:        user.ID,
+			Name:      user.Name,
+			Email:     user.Email,
+			RoleID:    user.ID,
+			CreatedAt: user.CreatedAt,
+			UpdatedAt: user.UpdatedAt,
+		})
+	}
+
+	utils.RespondSuccess(c, responese, "Users fetched successfully")
 }
 
 func (h *Handler) GetUsersByID(c *gin.Context) {
@@ -43,7 +55,16 @@ func (h *Handler) GetUsersByID(c *gin.Context) {
 		return
 	}
 
-	utils.RespondSuccess(c, user, "User fetched successfully")
+	response := ResponseUsers{
+		ID:        user.ID,
+		Name:      user.Name,
+		Email:     user.Email,
+		RoleID:    user.ID,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+	}
+
+	utils.RespondSuccess(c, response, "User fetched successfully")
 
 }
 
@@ -63,7 +84,16 @@ func (h *Handler) CreateUsers(c *gin.Context) {
 		return
 	}
 
-	utils.RespondSuccess(c, user, "User created successfully")
+	response := ResponseUsers{
+		ID:        user.ID,
+		Name:      user.Name,
+		Email:     user.Email,
+		RoleID:    user.ID,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+	}
+
+	utils.RespondSuccess(c, response, "User created successfully")
 }
 
 func (h *Handler) UpdateUsers(c *gin.Context) {
@@ -85,7 +115,17 @@ func (h *Handler) UpdateUsers(c *gin.Context) {
 		utils.RespondError(c, http.StatusInternalServerError, "Failed to update user")
 		return
 	}
-	utils.RespondSuccess(c, user, "User updated successfully")
+
+	response := ResponseUsers{
+		ID:        user.ID,
+		Name:      user.Name,
+		Email:     user.Email,
+		RoleID:    user.ID,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+	}
+
+	utils.RespondSuccess(c, response, "User updated successfully")
 }
 
 func (h *Handler) DeleteUsers(c *gin.Context) {
@@ -131,5 +171,14 @@ func (h *Handler) Profile(c *gin.Context) {
 		return
 	}
 
-	utils.RespondSuccess(c, user, "User fetched successfully")
+	response := ResponseUsers{
+		ID:        user.ID,
+		Name:      user.Name,
+		Email:     user.Email,
+		RoleID:    user.ID,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+	}
+
+	utils.RespondSuccess(c, response, "User fetched successfully")
 }

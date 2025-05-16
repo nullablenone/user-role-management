@@ -24,13 +24,18 @@ func (h *Handler) Register(c *gin.Context) {
 		return
 	}
 
-	_, err = h.Service.ServiceRegister(input)
+	user, err := h.Service.ServiceRegister(input)
 	if err != nil {
 		utils.RespondError(c, http.StatusBadRequest, "Failed to register user")
 		return
 	}
 
-	utils.RespondSuccess(c, nil, "User registered successfully")
+	response := ResponseRegister{
+		Name:  user.Name,
+		Email: user.Email,
+	}
+
+	utils.RespondSuccess(c, response, "User registered successfully")
 }
 
 func (h *Handler) Login(c *gin.Context) {
@@ -48,5 +53,9 @@ func (h *Handler) Login(c *gin.Context) {
 		return
 	}
 
-	utils.RespondSuccess(c, gin.H{"token": token}, "Login successful")
+	response := ResponseLogin{
+		Token: token,
+	}
+
+	utils.RespondSuccess(c, response, "Login successful")
 }

@@ -15,6 +15,15 @@ func NewHandler(service Service) *Handler {
 	return &Handler{Service: service}
 }
 
+// @Summary Register a new user
+// @Description Create a new user account
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param input body RegisterRequest true "Register Request"
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Router /register [post]
 func (h *Handler) Register(c *gin.Context) {
 	var input RegisterRequest
 
@@ -38,6 +47,16 @@ func (h *Handler) Register(c *gin.Context) {
 	utils.RespondSuccess(c, response, "User registered successfully")
 }
 
+// @Summary Login a user
+// @Description Authenticate a user and return a JWT token
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param input body LoginRequest true "Login Request"
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
+// @Router /login [post]
 func (h *Handler) Login(c *gin.Context) {
 	var input LoginRequest
 

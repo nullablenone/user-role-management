@@ -750,7 +750,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "",
-	Description:      "This API allows managing users and roles with authentication.\n\n🔐 **Authorization**\nTo access protected endpoints, click \"Authorize\" and enter your token in this format:\n`Bearer <your-token>` (with a space after Bearer).\n\n👤 **Login as Admin**\nUse the `/login` endpoint to get a token. Here is the default admin credential:\n- **Email**: `admin@gmail.com`\n- **Password**: `admin@gmail.com`\n\nMake sure to copy the token from the login response and prepend it with `Bearer ` before pasting it into the Authorize box.",
+	Description:      "This API allows managing users and roles with authentication.\n\n🔐 **Authorization**\nTo access protected endpoints, click \"Authorize\" and enter your token in this format:\n`Bearer <your-token>` (with a space after Bearer).\n\n👤 **Login as Admin**\nIf you want to log in as an admin, please contact the developer. And that's me.\n**Contact Email**: useryesa9@gmail.com\n\nMake sure to copy the token from the login response and prepend it with `Bearer ` before pasting it into the Authorize box.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

@@ -22,9 +22,8 @@ import (
 // @description  `Bearer <your-token>` (with a space after Bearer).
 // @description
 // @description  👤 **Login as Admin**
-// @description  Use the `/login` endpoint to get a token. Here is the default admin credential:
-// @description  - **Email**: `admin@gmail.com`
-// @description  - **Password**: `admin@gmail.com`
+// @description  If you want to log in as an admin, please contact the developer. And that's me.  
+// @description  **Contact Email**: useryesa9@gmail.com
 // @description
 // @description  Make sure to copy the token from the login response and prepend it with `Bearer ` before pasting it into the Authorize box.
 

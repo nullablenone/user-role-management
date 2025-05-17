@@ -1,7 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "This API allows managing users and roles with authentication.\n\n🔐 **Authorization**\nTo access protected endpoints, click \"Authorize\" and enter your token in this format:\n`Bearer \u003cyour-token\u003e` (with a space after Bearer).\n\n👤 **Login as Admin**\nUse the `/login` endpoint to get a token. Here is the default admin credential:\n- **Email**: `admin@gmail.com`\n- **Password**: `admin@gmail.com`\n\nMake sure to copy the token from the login response and prepend it with `Bearer ` before pasting it into the Authorize box.",
+        "description": "This API allows managing users and roles with authentication.\n\n🔐 **Authorization**\nTo access protected endpoints, click \"Authorize\" and enter your token in this format:\n`Bearer \u003cyour-token\u003e` (with a space after Bearer).\n\n👤 **Login as Admin**\nIf you want to log in as an admin, please contact the developer. And that's me.\n**Contact Email**: useryesa9@gmail.com\n\nMake sure to copy the token from the login response and prepend it with `Bearer ` before pasting it into the Authorize box.",
         "contact": {
             "name": "Developer Support",
             "email": "useryesa9@gmail.com"

@@ -1,4 +1,7 @@
-z## Project Structure
+# User and Role Management
+This is a backend system API project designed to implement Role-Based Access Control (RBAC) using Golang. It focuses on building a secure, modular, and scalable authentication and authorization system with a clean code structure.
+
+## Project Structure
 
 ```
 user-role-management/

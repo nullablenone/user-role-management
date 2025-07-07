@@ -6,6 +6,7 @@ import (
 	"manajemen-user/internal/domain/auth"
 	"manajemen-user/internal/domain/role"
 	"manajemen-user/internal/domain/user"
+	"manajemen-user/internal/infrastucture/repository"
 	"manajemen-user/routes"
 	"manajemen-user/seeders"
 
@@ -22,7 +23,7 @@ import (
 // @description  `Bearer <your-token>` (with a space after Bearer).
 // @description
 // @description  👤 **Login as Admin**
-// @description  If you want to log in as an admin, please contact the developer. And that's me.  
+// @description  If you want to log in as an admin, please contact the developer. And that's me.
 // @description  **Contact Email**: useryesa9@gmail.com
 // @description
 // @description  Make sure to copy the token from the login response and prepend it with `Bearer ` before pasting it into the Authorize box.
@@ -68,8 +69,8 @@ func main() {
 	seeders.SeedUser(db)
 
 	// Set Repo
-	userRepo := user.NewRepository(db)
-	roleRepo := role.NewRepository(db)
+	userRepo := repository.NewUserRepository(db)
+	roleRepo := repository.NewRoleRepository(db)
 
 	// Set service
 	authService := auth.NewService(userRepo)

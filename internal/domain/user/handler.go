@@ -41,7 +41,7 @@ func (h *Handler) GetUsers(c *gin.Context) {
 			ID:        user.ID,
 			Name:      user.Name,
 			Email:     user.Email,
-			RoleID:    user.ID,
+			RoleID:    user.RoleID,
 			CreatedAt: user.CreatedAt,
 			UpdatedAt: user.UpdatedAt,
 		})
@@ -77,7 +77,7 @@ func (h *Handler) GetUsersByID(c *gin.Context) {
 		ID:        user.ID,
 		Name:      user.Name,
 		Email:     user.Email,
-		RoleID:    user.ID,
+		RoleID:    user.RoleID,
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 	}

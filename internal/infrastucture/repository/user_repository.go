@@ -82,27 +82,22 @@ func (r *userRepository) CreateUsers(user *user.User) error {
 		Password: user.Password,
 		RoleID:   user.RoleID,
 	}
-	return r.DB.Create(&userModel).Error
+
+	if err := r.DB.Create(&userModel).Error; err != nil {
+		return err
+	}
+
+	user.ID = userModel.ID
+
+	return nil
 }
 
 func (r *userRepository) SaveUsers(user *user.User) error {
-	userModel := UserModel{
-		Name:     user.Name,
-		Email:    user.Email,
-		Password: user.Password,
-		RoleID:   user.RoleID,
-	}
-	return r.DB.Save(&userModel).Error
+	return r.DB.Save(user).Error
 }
 
 func (r *userRepository) DeleteUsers(user *user.User) error {
-	userModel := UserModel{
-		Name:     user.Name,
-		Email:    user.Email,
-		Password: user.Password,
-		RoleID:   user.RoleID,
-	}
-	return r.DB.Delete(&userModel).Error
+	return r.DB.Delete(&user).Error
 }
 
 func (r *userRepository) FindByEmailWithRole(email string) (*user.User, error) {

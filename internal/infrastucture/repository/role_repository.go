@@ -14,29 +14,63 @@ func NewRoleRepository(db *gorm.DB) role.Repository {
 	return &roleRepository{DB: db}
 }
 
-func (r *roleRepository) GetAllRoles(user []role.Role) ([]role.Role, error) {
-	if err := r.DB.Find(&user).Error; err != nil {
+func (r *roleRepository) GetAllRoles() ([]role.Role, error) {
+	var roleModels []RoleModel
+	if err := r.DB.Find(&roleModels).Error; err != nil {
 		return nil, err
 	}
-	return user, nil
+
+	var roles []role.Role
+
+	for _, item := range roleModels {
+		domainRole := role.Role{
+			ID:          item.ID,
+			Name:        item.Name,
+			Deskription: item.Deskription,
+			CreatedAt:   item.CreatedAt,
+			UpdatedAt:   item.UpdatedAt,
+		}
+
+		roles = append(roles, domainRole)
+	}
+
+	return roles, nil
 }
 
 func (r *roleRepository) GetRolesByID(id string) (*role.Role, error) {
-	var user role.Role
-	if err := r.DB.Where("ID = ?", id).First(&user).Error; err != nil {
+	var roleModel RoleModel
+	if err := r.DB.Where("ID = ?", id).First(&roleModel).Error; err != nil {
 		return nil, err
 	}
-	return &user, nil
+
+	domainRole := role.Role{
+		ID:          roleModel.ID,
+		Name:        roleModel.Name,
+		Deskription: roleModel.Deskription,
+		CreatedAt:   roleModel.CreatedAt,
+		UpdatedAt:   roleModel.UpdatedAt,
+	}
+	return &domainRole, nil
 }
 
-func (r *roleRepository) CreateRoles(user *role.Role) error {
-	return r.DB.Create(user).Error
+func (r *roleRepository) CreateRoles(role *role.Role) error {
+	roleModel := RoleModel{
+		Name:        role.Name,
+		Deskription: role.Deskription,
+	}
+
+	if err := r.DB.Create(&roleModel).Error; err != nil {
+		return err
+	}
+	role.ID = roleModel.ID
+
+	return nil
 }
 
-func (r *roleRepository) SaveRoles(user *role.Role) error {
-	return r.DB.Save(user).Error
+func (r *roleRepository) SaveRoles(role *role.Role) error {
+	return r.DB.Save(role).Error
 }
 
-func (r *roleRepository) DeleteRoles(user *role.Role) error {
-	return r.DB.Delete(user).Error
+func (r *roleRepository) DeleteRoles(role *role.Role) error {
+	return r.DB.Delete(role).Error
 }

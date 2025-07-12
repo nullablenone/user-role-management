@@ -24,8 +24,7 @@ func NewService(repo Repository) Service {
 }
 
 func (s *service) ServiceGetRoles() ([]Role, error) {
-	var role []Role
-	roles, err := s.Repo.GetAllRoles(role)
+	roles, err := s.Repo.GetAllRoles()
 	if err != nil {
 		return nil, fmt.Errorf("ServiceGetRoles: failed to get roles: %w", err)
 	}

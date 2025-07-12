@@ -1,9 +1,9 @@
 package role
 
 type Repository interface {
-	GetAllRoles(user []Role) ([]Role, error)
+	GetAllRoles() ([]Role, error)
 	GetRolesByID(id string) (*Role, error)
-	CreateRoles(user *Role) error
-	SaveRoles(user *Role) error
-	DeleteRoles(user *Role) error
+	CreateRoles(role *Role) error
+	SaveRoles(role *Role) error
+	DeleteRoles(role *Role) error
 }

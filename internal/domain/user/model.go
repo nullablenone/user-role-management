@@ -2,15 +2,16 @@ package user
 
 import (
 	"manajemen-user/internal/domain/role"
-
-	"gorm.io/gorm"
+	"time"
 )
 
 type User struct {
-	gorm.Model
-	Name     string `gorm:"type:varchar(50);not null"`
-	Email    string `gorm:"type:varchar(350);uniqueIndex;not null"`
-	Password string `gorm:"type:varchar(350);not null"`
-	RoleID   uint   `gorm:"default:1"` // Foreign key ke Role
-	Role     role.Role
+	ID        uint
+	Name      string
+	Email     string
+	Password  string
+	RoleID    uint
+	Role      role.Role // Relasi ke model domain Role
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }

@@ -26,8 +26,7 @@ func NewService(repo Repository) Service {
 }
 
 func (s *service) ServiceGetUsers() ([]User, error) {
-	var user []User
-	users, err := s.Repo.GetAllUsers(user)
+	users, err := s.Repo.GetAllUsers()
 	if err != nil {
 		return nil, fmt.Errorf("ServiceGetUsers: failed to get users: %w", err)
 	}

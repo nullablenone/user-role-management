@@ -6,8 +6,9 @@ import (
 	"manajemen-user/utils"
 	"net/http"
 
+	appErrors "manajemen-user/internal/errors"
+
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 type Handler struct {
@@ -31,7 +32,7 @@ func (h *Handler) GetRoles(c *gin.Context) {
 	roles, err := h.Service.ServiceGetRoles()
 	if err != nil {
 		log.Printf("Error in GetRoles: %v", err)
-		utils.RespondError(c, http.StatusInternalServerError, "Failed to fetch roles")
+		utils.HandleError(c, err)
 		return
 	}
 
@@ -62,13 +63,15 @@ func (h *Handler) GetRoles(c *gin.Context) {
 func (h *Handler) GetRolesByID(c *gin.Context) {
 	id := c.Param("id")
 	role, err := h.Service.ServiceGetRolesByID(id)
+
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			utils.RespondError(c, http.StatusNotFound, "Role not found")
+		if errors.Is(err, appErrors.ErrNotFound) {
+			utils.HandleError(c, err)
 			return
 		}
+
 		log.Printf("Error in GetRolesByID: %v", err)
-		utils.RespondError(c, http.StatusNotFound, "Role not found")
+		utils.HandleError(c, err)
 		return
 	}
 
@@ -107,7 +110,7 @@ func (h *Handler) CreateRoles(c *gin.Context) {
 	role, err := h.Service.ServiceCreateRoles(input)
 	if err != nil {
 		log.Printf("Error in CreateRoles: %v", err)
-		utils.RespondError(c, http.StatusInternalServerError, "Failed to create role")
+		utils.HandleError(c, err)
 		return
 	}
 
@@ -147,12 +150,12 @@ func (h *Handler) UpdateRoles(c *gin.Context) {
 
 	role, err := h.Service.ServiceUpdateRoles(id, input)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			utils.RespondError(c, http.StatusNotFound, "Role not found")
+		if errors.Is(err, appErrors.ErrNotFound) {
+			utils.HandleError(c, err)
 			return
 		}
 		log.Printf("Error in UpdateRoles: %v", err)
-		utils.RespondError(c, http.StatusInternalServerError, "Failed to update role")
+		utils.HandleError(c, err)
 		return
 	}
 
@@ -182,12 +185,12 @@ func (h *Handler) DeleteRoles(c *gin.Context) {
 	id := c.Param("id")
 	err := h.Service.ServiceDeleteRoles(id)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			utils.RespondError(c, http.StatusNotFound, "Role not found")
+		if errors.Is(err, appErrors.ErrNotFound) {
+			utils.HandleError(c, err)
 			return
 		}
 		log.Printf("Error in DeleteRoles: %v", err)
-		utils.RespondError(c, http.StatusInternalServerError, "Failed to delete role")
+		utils.HandleError(c, err)
 		return
 	}
 

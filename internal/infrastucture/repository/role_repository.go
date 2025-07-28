@@ -1,7 +1,9 @@
 package repository
 
 import (
+	"errors"
 	"manajemen-user/internal/domain/role"
+	appErrors "manajemen-user/internal/errors"
 
 	"gorm.io/gorm"
 )
@@ -39,8 +41,12 @@ func (r *roleRepository) GetAllRoles() ([]role.Role, error) {
 
 func (r *roleRepository) GetRolesByID(id string) (*role.Role, error) {
 	var roleModel RoleModel
+
 	if err := r.DB.Where("ID = ?", id).First(&roleModel).Error; err != nil {
-		return nil, err
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, appErrors.ErrNotFound
+		}
+		return nil, appErrors.ErrInternal
 	}
 
 	domainRole := role.Role{

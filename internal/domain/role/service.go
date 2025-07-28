@@ -2,9 +2,8 @@ package role
 
 import (
 	"errors"
-	"fmt"
-
-	"gorm.io/gorm"
+	"log"
+	appErrors "manajemen-user/internal/errors"
 )
 
 type Service interface {
@@ -25,20 +24,28 @@ func NewService(repo Repository) Service {
 
 func (s *service) ServiceGetRoles() ([]Role, error) {
 	roles, err := s.Repo.GetAllRoles()
+
 	if err != nil {
-		return nil, fmt.Errorf("ServiceGetRoles: failed to get roles: %w", err)
+		log.Printf("Failed to get all roles from repository: %v", err)
+		return nil, appErrors.ErrInternal
 	}
+
 	return roles, err
 }
 
 func (s *service) ServiceGetRolesByID(id string) (*Role, error) {
 	role, err := s.Repo.GetRolesByID(id)
+
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, fmt.Errorf("ServiceGetRolesByID: role with ID %s not found: %w", id, err)
+		if errors.Is(err, appErrors.ErrNotFound) {
+			log.Printf("Role with ID %s not found in database", id)
+			return nil, appErrors.ErrNotFound
 		}
-		return nil, fmt.Errorf("ServiceGetRolesByID: failed to get role: %w", err)
+
+		log.Printf("Failed to query role with ID %s: %v", id, err)
+		return nil, appErrors.ErrInternal
 	}
+
 	return role, nil
 }
 
@@ -51,7 +58,8 @@ func (s *service) ServiceCreateRoles(input CreateRolesRequest) (*Role, error) {
 
 	err := s.Repo.CreateRoles(&role)
 	if err != nil {
-		return nil, fmt.Errorf("ServiceCreateRoles: failed to create role: %w", err)
+		log.Printf("Failed to create role '%s' in database: %v", role.Name, err)
+		return nil, appErrors.ErrInternal
 	}
 
 	return &role, err
@@ -59,11 +67,15 @@ func (s *service) ServiceCreateRoles(input CreateRolesRequest) (*Role, error) {
 
 func (s *service) ServiceUpdateRoles(id string, input UpdateRolesRequest) (*Role, error) {
 	role, err := s.Repo.GetRolesByID(id)
+
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, fmt.Errorf("ServiceUpdateRoles: role with ID %s not found: %w", id, err)
+		if errors.Is(err, appErrors.ErrNotFound) {
+			log.Printf("Role with ID %s not found in database", id)
+			return nil, appErrors.ErrNotFound
 		}
-		return nil, fmt.Errorf("ServiceUpdateRoles: failed to get role: %w", err)
+
+		log.Printf("Failed to query role with ID %s: %v", id, err)
+		return nil, appErrors.ErrInternal
 	}
 
 	role.Name = input.Name
@@ -71,7 +83,8 @@ func (s *service) ServiceUpdateRoles(id string, input UpdateRolesRequest) (*Role
 
 	err = s.Repo.SaveRoles(role)
 	if err != nil {
-		return nil, fmt.Errorf("ServiceUpdateRoles: failed to update role: %w", err)
+		log.Printf("Failed to save updated role with ID %s: %v", id, err)
+		return nil, appErrors.ErrInternal
 	}
 	return role, nil
 }
@@ -79,15 +92,19 @@ func (s *service) ServiceUpdateRoles(id string, input UpdateRolesRequest) (*Role
 func (s *service) ServiceDeleteRoles(id string) error {
 	role, err := s.Repo.GetRolesByID(id)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return fmt.Errorf("ServiceDeleteRoles: role with ID %s not found: %w", id, err)
+		if errors.Is(err, appErrors.ErrNotFound) {
+			log.Printf("Role with ID %s not found in database", id)
+			return appErrors.ErrNotFound
 		}
-		return fmt.Errorf("ServiceDeleteRoles: failed to get role: %w", err)
+
+		log.Printf("Failed to query role with ID %s: %v", id, err)
+		return appErrors.ErrInternal
 	}
 
 	err = s.Repo.DeleteRoles(role)
 	if err != nil {
-		return fmt.Errorf("ServiceDeleteRoles: failed to delete role: %w", err)
+		log.Printf("Failed to delete role with ID %s from database: %v", id, err)
+		return appErrors.ErrInternal
 	}
 
 	return nil

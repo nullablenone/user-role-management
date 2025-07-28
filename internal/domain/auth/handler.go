@@ -35,7 +35,7 @@ func (h *Handler) Register(c *gin.Context) {
 
 	user, err := h.Service.ServiceRegister(input)
 	if err != nil {
-		utils.RespondError(c, http.StatusBadRequest, "Failed to register user")
+		utils.HandleError(c, err)
 		return
 	}
 
@@ -68,7 +68,7 @@ func (h *Handler) Login(c *gin.Context) {
 
 	token, err := h.Service.ServiceLogin(input)
 	if err != nil {
-		utils.RespondError(c, http.StatusUnauthorized, "Invalid email or password")
+		utils.HandleError(c, err)
 		return
 	}
 

@@ -1,8 +1,10 @@
 package repository
 
 import (
+	"errors"
 	"manajemen-user/internal/domain/role"
 	"manajemen-user/internal/domain/user"
+	appErrors "manajemen-user/internal/errors"
 
 	"gorm.io/gorm"
 )
@@ -52,7 +54,9 @@ func (r *userRepository) GetAllUsers() ([]user.User, error) {
 func (r *userRepository) GetUsersByID(id string) (*user.User, error) {
 	var userModel UserModel
 	if err := r.DB.Preload("Role").Where("ID = ?", id).First(&userModel).Error; err != nil {
-		return nil, err
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, appErrors.ErrNotFound
+		}
 	}
 
 	domainUser := user.User{
@@ -103,6 +107,9 @@ func (r *userRepository) DeleteUsers(user *user.User) error {
 func (r *userRepository) FindByEmailWithRole(email string) (*user.User, error) {
 	var userModel UserModel
 	if err := r.DB.Preload("Role").Where("email = ?", email).First(&userModel).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, appErrors.ErrNotFound
+		}
 		return nil, err
 	}
 

@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"errors"
+	appErrors "manajemen-user/internal/errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -19,4 +21,15 @@ func RespondSuccess(c *gin.Context, data any, message string) {
 		"message": message,
 		"data":    data,
 	})
+}
+
+func HandleError(c *gin.Context, err error) {
+	switch {
+	case errors.Is(err, appErrors.ErrNotFound):
+		c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": "Resource not found"})
+	case errors.Is(err, appErrors.ErrInternal):
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "An internal server error occurred"})
+	default:
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "An unknown error occurred"})
+	}
 }

@@ -57,6 +57,7 @@ func (r *userRepository) GetUsersByID(id string) (*user.User, error) {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, appErrors.ErrNotFound
 		}
+		return nil, err
 	}
 
 	domainUser := user.User{
@@ -92,6 +93,7 @@ func (r *userRepository) CreateUsers(user *user.User) error {
 	}
 
 	user.ID = userModel.ID
+	user.RoleID = userModel.RoleID
 
 	return nil
 }

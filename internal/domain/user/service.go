@@ -3,9 +3,9 @@ package user
 import (
 	"errors"
 	"fmt"
+	"log"
+	appErrors "manajemen-user/internal/errors"
 	"manajemen-user/utils"
-
-	"gorm.io/gorm"
 )
 
 type Service interface {
@@ -28,19 +28,25 @@ func NewService(repo Repository) Service {
 func (s *service) ServiceGetUsers() ([]User, error) {
 	users, err := s.Repo.GetAllUsers()
 	if err != nil {
-		return nil, fmt.Errorf("ServiceGetUsers: failed to get users: %w", err)
+		log.Printf("Failed to get all users from repository: %v", err)
+		return nil, appErrors.ErrInternal
 	}
 	return users, err
 }
 
 func (s *service) ServiceGetUsersByID(id string) (*User, error) {
 	user, err := s.Repo.GetUsersByID(id)
+
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, fmt.Errorf("ServiceGetUsersByID: user with ID %s not found: %w", id, err)
+		if errors.Is(err, appErrors.ErrNotFound) {
+			log.Printf("User with ID %s not found in database", id)
+			return nil, appErrors.ErrNotFound
 		}
-		return nil, fmt.Errorf("ServiceGetUsersByID: failed to get user: %w", err)
+
+		log.Printf("Failed to query user with ID %s: %v", id, err)
+		return nil, appErrors.ErrInternal
 	}
+
 	return user, nil
 }
 
@@ -48,7 +54,8 @@ func (s *service) ServiceCreateUsers(input CreateUsersRequest) (*User, error) {
 
 	password, err := utils.HashedPassword(input.Password)
 	if err != nil {
-		return nil, fmt.Errorf("ServiceCreateUsers: failed hashed password: %w", err)
+		log.Printf("Failed to hash password for user %s: %v", input.Email, err)
+		return nil, appErrors.ErrInternal
 	}
 
 	user := User{
@@ -60,7 +67,8 @@ func (s *service) ServiceCreateUsers(input CreateUsersRequest) (*User, error) {
 
 	err = s.Repo.CreateUsers(&user)
 	if err != nil {
-		return nil, fmt.Errorf("ServiceCreateUsers: failed to create user: %w", err)
+		log.Printf("Failed to create user %s in database: %v", user.Email, err)
+		return nil, appErrors.ErrInternal
 	}
 
 	return &user, err
@@ -69,15 +77,19 @@ func (s *service) ServiceCreateUsers(input CreateUsersRequest) (*User, error) {
 func (s *service) ServiceUpdateUsers(id string, input UpdateUsersRequest) (*User, error) {
 	user, err := s.Repo.GetUsersByID(id)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, fmt.Errorf("ServiceUpdateUsers: user with ID %s not found: %w", id, err)
+		if errors.Is(err, appErrors.ErrNotFound) {
+			log.Printf("User with ID %s not found in database", id)
+			return nil, appErrors.ErrNotFound
 		}
-		return nil, fmt.Errorf("ServiceUpdateUsers: failed to get user: %w", err)
+
+		log.Printf("Failed to query user with ID %s: %v", id, err)
+		return nil, appErrors.ErrInternal
 	}
 
 	password, err := utils.HashedPassword(input.Password)
 	if err != nil {
-		return nil, err
+		log.Printf("Failed to hash new password for user ID %s: %v", id, err)
+		return nil, appErrors.ErrInternal
 	}
 
 	user.Name = input.Name
@@ -87,7 +99,8 @@ func (s *service) ServiceUpdateUsers(id string, input UpdateUsersRequest) (*User
 
 	err = s.Repo.SaveUsers(user)
 	if err != nil {
-		return nil, fmt.Errorf("ServiceUpdateUsers: failed to update user: %w", err)
+		log.Printf("Failed to save updated user with ID %s: %v", id, err)
+		return nil, appErrors.ErrInternal
 	}
 	return user, nil
 }
@@ -95,15 +108,19 @@ func (s *service) ServiceUpdateUsers(id string, input UpdateUsersRequest) (*User
 func (s *service) ServiceDeleteUsers(id string) error {
 	user, err := s.Repo.GetUsersByID(id)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return fmt.Errorf("ServiceDeleteUsers: User with ID %s not found: %w", id, err)
+		if errors.Is(err, appErrors.ErrNotFound) {
+			log.Printf("User with ID %s not found in database", id)
+			return appErrors.ErrNotFound
 		}
-		return fmt.Errorf("ServiceDeleteUsers: failed to get user: %w", err)
+
+		log.Printf("Failed to query user with ID %s: %v", id, err)
+		return appErrors.ErrInternal
 	}
 
 	err = s.Repo.DeleteUsers(user)
 	if err != nil {
-		return fmt.Errorf("ServiceDeleteUsers: failed to delete user: %w", err)
+		log.Printf("Failed to delete user with ID %s from database: %v", id, err)
+		return appErrors.ErrInternal
 	}
 
 	return nil
@@ -113,10 +130,13 @@ func (s *service) ServiceProfileUsers(id float64) (*User, error) {
 	str_id := fmt.Sprintf("%.0f", id)
 	user, err := s.Repo.GetUsersByID(str_id)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, fmt.Errorf("ServiceProfileUsers: user with ID %f not found: %w", id, err)
+		if errors.Is(err, appErrors.ErrNotFound) {
+			log.Printf("User with ID %s not found in database", str_id)
+			return nil, appErrors.ErrNotFound
 		}
-		return nil, fmt.Errorf("ServiceProfileUsers: failed to get user: %w", err)
+
+		log.Printf("Failed to query user with ID %s: %v", str_id, err)
+		return nil, appErrors.ErrInternal
 	}
 	return user, nil
 }

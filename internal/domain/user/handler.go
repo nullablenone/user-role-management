@@ -1,14 +1,12 @@
 package user
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"manajemen-user/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 type Handler struct {
@@ -31,13 +29,13 @@ func (h *Handler) GetUsers(c *gin.Context) {
 	users, err := h.Service.ServiceGetUsers()
 	if err != nil {
 		log.Printf("Error in GetUsers: %v", err)
-		utils.RespondError(c, http.StatusInternalServerError, "Failed to fetch users")
+		utils.HandleError(c, err)
 		return
 	}
 
-	var responese []ResponseUsers
+	var response []ResponseUsers
 	for _, user := range users {
-		responese = append(responese, ResponseUsers{
+		response = append(response, ResponseUsers{
 			ID:        user.ID,
 			Name:      user.Name,
 			Email:     user.Email,
@@ -47,7 +45,7 @@ func (h *Handler) GetUsers(c *gin.Context) {
 		})
 	}
 
-	utils.RespondSuccess(c, responese, "Users fetched successfully")
+	utils.RespondSuccess(c, response, "Users fetched successfully")
 }
 
 // GetUsersByID godoc
@@ -64,12 +62,7 @@ func (h *Handler) GetUsersByID(c *gin.Context) {
 	id := c.Param("id")
 	user, err := h.Service.ServiceGetUsersByID(id)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			utils.RespondError(c, http.StatusNotFound, "User not found")
-			return
-		}
-		log.Printf("Error in GetUsersByID: %v", err)
-		utils.RespondError(c, http.StatusNotFound, "User not found")
+		utils.HandleError(c, err)
 		return
 	}
 
@@ -109,7 +102,7 @@ func (h *Handler) CreateUsers(c *gin.Context) {
 	user, err := h.Service.ServiceCreateUsers(input)
 	if err != nil {
 		log.Printf("Error in CreateUsers: %v", err)
-		utils.RespondError(c, http.StatusInternalServerError, "Failed to create user")
+		utils.HandleError(c, err)
 		return
 	}
 
@@ -117,7 +110,7 @@ func (h *Handler) CreateUsers(c *gin.Context) {
 		ID:        user.ID,
 		Name:      user.Name,
 		Email:     user.Email,
-		RoleID:    user.ID,
+		RoleID:    user.RoleID,
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 	}
@@ -149,12 +142,7 @@ func (h *Handler) UpdateUsers(c *gin.Context) {
 
 	user, err := h.Service.ServiceUpdateUsers(id, input)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			utils.RespondError(c, http.StatusNotFound, "User not found")
-			return
-		}
-		log.Printf("Error in UpdateUsers: %v", err)
-		utils.RespondError(c, http.StatusInternalServerError, "Failed to update user")
+		utils.HandleError(c, err)
 		return
 	}
 
@@ -162,7 +150,7 @@ func (h *Handler) UpdateUsers(c *gin.Context) {
 		ID:        user.ID,
 		Name:      user.Name,
 		Email:     user.Email,
-		RoleID:    user.ID,
+		RoleID:    user.RoleID,
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 	}
@@ -184,12 +172,8 @@ func (h *Handler) DeleteUsers(c *gin.Context) {
 	id := c.Param("id")
 	err := h.Service.ServiceDeleteUsers(id)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			utils.RespondError(c, http.StatusNotFound, "User not found")
-			return
-		}
 		log.Printf("Error in DeleteUsers: %v", err)
-		utils.RespondError(c, http.StatusInternalServerError, "Failed to delete user")
+		utils.HandleError(c, err)
 		return
 	}
 
@@ -224,12 +208,8 @@ func (h *Handler) Profile(c *gin.Context) {
 	user_id := claims["user_id"].(float64)
 	user, err := h.Service.ServiceProfileUsers(user_id)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			utils.RespondError(c, http.StatusNotFound, "User not found")
-			return
-		}
 		log.Printf("Error in Profile: %v", err)
-		utils.RespondError(c, http.StatusNotFound, "User not found")
+		utils.HandleError(c, err)
 		return
 	}
 
@@ -237,7 +217,7 @@ func (h *Handler) Profile(c *gin.Context) {
 		ID:        user.ID,
 		Name:      user.Name,
 		Email:     user.Email,
-		RoleID:    user.ID,
+		RoleID:    user.RoleID,
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 	}

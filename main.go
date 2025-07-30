@@ -54,9 +54,10 @@ func main() {
 	// Env Load
 	config.LoadENV()
 
-	// Connect DB
-
+	// Init Config
 	db := config.ConnectDB()
+	config.ConnectRedis()
+
 	// Migrate Table
 
 	err := db.AutoMigrate(role.Role{}, user.User{})

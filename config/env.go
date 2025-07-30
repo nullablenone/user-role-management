@@ -15,6 +15,11 @@ type ENV struct {
 	DBPort    string
 	DBSSLMode string
 	SecretKey string
+
+	// Redis
+	RedisAddr     string
+	RedisPassword string
+	RedisDB       string
 }
 
 var Env ENV
@@ -33,6 +38,11 @@ func LoadENV() {
 		DBPort:    os.Getenv("DB_PORT"),
 		DBSSLMode: os.Getenv("DB_SSLMODE"),
 		SecretKey: os.Getenv("SecretKey"),
+
+		// Redis
+		RedisAddr:     os.Getenv("REDIS_ADDR"),
+		RedisPassword: os.Getenv("REDIS_PASSWORD"),
+		RedisDB:       os.Getenv("REDIS_DB"),
 	}
 
 }

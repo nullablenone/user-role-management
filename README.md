@@ -1,11 +1,10 @@
 # User & Role Management API (Clean Architecture)
 
-
 ## 🚀 Pengantar
 
 Selamat datang di **User & Role Management API**, sebuah proyek *backend* yang dibangun menggunakan **Golang** dengan implementasi **Clean Architecture**. Proyek ini bukan sekadar API biasa, melainkan sebuah contoh penerapan arsitektur perangkat lunak yang bersih, modular, dan *scalable* untuk membangun sistem otentikasi dan otorisasi berbasis peran (RBAC) yang solid.
 
-Tujuan utama proyek ini adalah menyediakan fondasi yang kokoh untuk aplikasi yang membutuhkan manajemen pengguna dan hak akses yang aman dan terstruktur.
+Tujuan utama proyek ini adalah menyediakan fondasi yang kokoh, berperforma tinggi, dan andal untuk aplikasi yang membutuhkan manajemen pengguna dan hak akses yang aman dan terstruktur.
 
 ---
 
@@ -18,10 +17,11 @@ Struktur lapisan pada proyek ini adalah sebagai berikut:
 1.  **Domain Layer**: Inti dari aplikasi. Lapisan ini berisi *entitas* (model) dan aturan bisnis (`service`) yang tidak bergantung pada detail teknis apa pun (seperti *database* atau *framework*).
     * `internal/domain/{user,role,auth}/model.go`
     * `internal/domain/{user,role,auth}/service.go`
-    * `internal/domain/{user,role,auth}/repository.go` (Interface)
+    * `internal/domain/{user,role}/repository.go` (Interface)
 
-2.  **Infrastructure Layer**: Berisi semua detail teknis dan implementasi dari *interface* yang didefinisikan di *domain layer*. Ini mencakup koneksi *database*, *caching*, dan komponen eksternal lainnya.
+2.  **Infrastructure Layer**: Berisi semua detail teknis dan implementasi dari *interface* yang didefinisikan di *domain layer*. Ini mencakup koneksi *database* (PostgreSQL), *caching* (Redis), dan komponen eksternal lainnya.
     * `internal/infrastucture/repository/`
+    * `internal/infrastucture/cache/`
     * `config/`
     * `utils/`
 
@@ -39,11 +39,14 @@ Pemisahan ini memastikan bahwa logika bisnis inti (Domain) tetap murni dan tidak
 -   **Manajemen Pengguna (Admin)**: Operasi CRUD (Create, Read, Update, Delete) penuh untuk mengelola data pengguna.
 -   **Manajemen Peran (Admin)**: Operasi CRUD untuk mengelola peran dan hak akses (`user` & `admin`).
 -   **Role-Based Access Control (RBAC)**: *Middleware* untuk membatasi akses ke *endpoint* tertentu hanya untuk peran yang diizinkan.
+-   **Caching Layer dengan Redis**: Implementasi *cache* pada *repository* pengguna (menggunakan *Decorator Pattern*) untuk mengurangi beban *database* dan mempercepat response time. Termasuk strategi *cache invalidation* yang cerdas.
+-   **Robust Error Handling**: Menggunakan *sentinel errors* untuk membedakan kesalahan bisnis (cth: *data not found*) dan kesalahan teknis, menghasilkan respons HTTP yang lebih akurat.
 -   **Dokumentasi API (Swagger)**: Dokumentasi API yang digenerasi secara otomatis dan interaktif.
 -   **Password Hashing**: Menggunakan `bcrypt` untuk mengamankan *password* pengguna.
 -   **Konfigurasi Terpusat**: Pengelolaan konfigurasi melalui file `.env`.
 
 ---
+
 
 ## 📚 Dokumentasi & Endpoint API
 
@@ -74,10 +77,10 @@ Dokumentasi API lengkap tersedia melalui Swagger. Setelah menjalankan aplikasi, 
 * **Bahasa**: Golang
 * **Framework**: Gin Gonic
 * **Database**: PostgreSQL
+* **Caching**: Redis
 * **ORM**: GORM
 * **Dokumentasi**: Swaggo
 * **Lainnya**: `godotenv`, `jwt-go`, `bcrypt`
-
 ---
 
 ## 📂 Struktur Proyek
@@ -87,6 +90,7 @@ Berikut adalah struktur folder yang telah dirancang untuk mendukung Clean Archit
 ```
 user-role-management/
 ├── config/
+│   ├── cache.go                        # Setup koneksi Redis
 │   ├── database.go                     # Setup koneksi database
 │   └── env.go                          # Memuat variabel dari file .env
 ├── docs/
@@ -111,7 +115,11 @@ user-role-management/
 │   │       ├── model.go                # Model domain untuk User
 │   │       ├── repository.go           # Interface (kontrak) untuk repository User
 │   │       └── service.go              # Logika bisnis untuk manajemen User
+│   ├── errors/
+│   │   └── errors.go                   # Definisi custom error aplikasi
 │   └── infrastucture/                  # Lapisan Infrastruktur (Detail Teknis)
+│       ├── cache/
+│       │   └── user_cache.go           # Implementasi cache repository untuk user
 │       └── repository/
 │           ├── db_models.go            # Model GORM untuk tabel 'users' & 'roles'
 │           ├── role_repository.go      # Implementasi repository untuk peran
@@ -150,15 +158,23 @@ Untuk menjalankan proyek ini secara lokal, ikuti langkah-langkah berikut:
     ```
 
 2.  **Konfigurasi Environment**
-    Buat file `.env` di root proyek. Anda bisa menyalin dari `README` ini atau membuatnya sendiri.
+    Salin dari `.env.example` atau buat file `.env` baru di root proyek.
     ```env
+    # Database
     DB_HOST=localhost
     DB_USER=postgres
     DB_PASS=password_anda
     DB_NAME=nama_database
     DB_PORT=5432
     DB_SSLMODE=disable
+
+    # JWT
     SecretKey=kunci_rahasia_jwt_anda
+
+    # Redis
+    REDIS_ADDR=localhost:6379
+    REDIS_PASSWORD=
+    REDIS_DB=0
     ```
     *Pastikan variabel di atas diisi sesuai dengan konfigurasi lokal Anda.*
 

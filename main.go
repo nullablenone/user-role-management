@@ -6,6 +6,7 @@ import (
 	"manajemen-user/internal/domain/auth"
 	"manajemen-user/internal/domain/role"
 	"manajemen-user/internal/domain/user"
+	"manajemen-user/internal/infrastucture/cache"
 	"manajemen-user/internal/infrastucture/repository"
 	"manajemen-user/routes"
 	"manajemen-user/seeders"
@@ -56,7 +57,7 @@ func main() {
 
 	// Init Config
 	db := config.ConnectDB()
-	config.ConnectRedis()
+	redisClint := config.ConnectRedis()
 
 	// Migrate Table
 
@@ -73,9 +74,12 @@ func main() {
 	userRepo := repository.NewUserRepository(db)
 	roleRepo := repository.NewRoleRepository(db)
 
+	// Set Cache
+	userCacheRepo := cache.NewUserCacheRepository(userRepo, redisClint)
+
 	// Set service
 	authService := auth.NewService(userRepo)
-	userService := user.NewService(userRepo)
+	userService := user.NewService(userCacheRepo)
 	roleService := role.NewService(roleRepo)
 
 	// Set User Hundler

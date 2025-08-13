@@ -1,6 +1,6 @@
 # User & Role Management API (Clean Architecture)
 
-## 🚀 Pengantar
+## Pengantar
 
 Selamat datang di **User & Role Management API**, sebuah proyek *backend* yang dibangun menggunakan **Golang** dengan implementasi **Clean Architecture**. Proyek ini bukan sekadar API biasa, melainkan sebuah contoh penerapan arsitektur perangkat lunak yang bersih, modular, dan *scalable* untuk membangun sistem otentikasi dan otorisasi berbasis peran (RBAC) yang solid.
 
@@ -8,7 +8,7 @@ Tujuan utama proyek ini adalah menyediakan fondasi yang kokoh, berperforma tingg
 
 ---
 
-## 🏛️ Konsep & Arsitektur
+## Konsep & Arsitektur
 
 Proyek ini secara ketat mengadopsi prinsip-prinsip **Clean Architecture** untuk memisahkan *concerns* dan memastikan setiap lapisan memiliki tanggung jawab yang jelas. Arsitektur ini membuat kode lebih mudah diuji, dipelihara, dan dikembangkan seiring waktu.
 
@@ -33,7 +33,7 @@ Pemisahan ini memastikan bahwa logika bisnis inti (Domain) tetap murni dan tidak
 
 ---
 
-## ✨ Fitur Utama
+## Fitur Utama
 
 -   **Otentikasi & Otorisasi Berbasis JWT**: Sistem login yang aman menghasilkan token JWT untuk akses ke *endpoint* yang dilindungi.
 -   **Manajemen Pengguna (Admin)**: Operasi CRUD (Create, Read, Update, Delete) penuh untuk mengelola data pengguna.
@@ -48,7 +48,7 @@ Pemisahan ini memastikan bahwa logika bisnis inti (Domain) tetap murni dan tidak
 ---
 
 
-## 📚 Dokumentasi & Endpoint API
+## Dokumentasi & Endpoint API
 
 Dokumentasi API lengkap tersedia melalui Swagger. Setelah menjalankan aplikasi, akses URL berikut:
 
@@ -72,7 +72,7 @@ Dokumentasi API lengkap tersedia melalui Swagger. Setelah menjalankan aplikasi, 
 
 ---
 
-## 🛠️ Tumpukan Teknologi
+## Tumpukan Teknologi
 
 * **Bahasa**: Golang
 * **Framework**: Gin Gonic
@@ -83,7 +83,7 @@ Dokumentasi API lengkap tersedia melalui Swagger. Setelah menjalankan aplikasi, 
 * **Lainnya**: `godotenv`, `jwt-go`, `bcrypt`
 ---
 
-## 📂 Struktur Proyek
+## Struktur Proyek
 
 Berikut adalah struktur folder yang telah dirancang untuk mendukung Clean Architecture.
 
@@ -147,7 +147,7 @@ user-role-management/
 
 ---
 
-## ⚙️ Instalasi & Konfigurasi
+## Instalasi & Konfigurasi
 
 Untuk menjalankan proyek ini secara lokal, ikuti langkah-langkah berikut:
 
@@ -191,7 +191,7 @@ Untuk menjalankan proyek ini secara lokal, ikuti langkah-langkah berikut:
 
 ---
 
-## 🚀 Cara Menggunakan API
+## Cara Menggunakan API
 
 1.  **Dapatkan Token**: Lakukan `POST` request ke `/login` dengan email dan password `admin@gmail.com` / `admin@gmail.com` (data dari *seeder*).
 2.  **Gunakan Token**: Salin token dari respons. Untuk mengakses *endpoint* yang dilindungi, tambahkan *header* `Authorization` dengan format `Bearer <token_anda>`.

@@ -1,10 +1,10 @@
-# User & Role Management API (Clean Architecture)
+# User and Role Management API (Clean Architecture)
 
 ## Pengantar
 
-Selamat datang di **User & Role Management API**, sebuah proyek *backend* yang dibangun menggunakan **Golang** dengan implementasi **Clean Architecture**. Proyek ini bukan sekadar API biasa, melainkan sebuah contoh penerapan arsitektur perangkat lunak yang bersih, modular, dan *scalable* untuk membangun sistem otentikasi dan otorisasi berbasis peran (RBAC) yang solid.
+Project ini awalnya dibuat dengan tujuan untuk membatasi akses user berdasarkan role, menggunakan JWT sebagai token untuk otorisasi dan pengecekan setiap route yang diproteksi.
 
-Tujuan utama proyek ini adalah menyediakan fondasi yang kokoh, berperforma tinggi, dan andal untuk aplikasi yang membutuhkan manajemen pengguna dan hak akses yang aman dan terstruktur.
+Kemudian, project ini dikembangkan lebih lanjut dengan menerapkan **Clean Architecture** agar struktur kodenya lebih rapi dan terstandar. Selanjutnya, saya melengkapi project ini dengan dokumentasi **Swagger** untuk mempermudah testing API, dan terakhir mengimplementasikan **Redis** untuk caching guna meningkatkan performa.
 
 ---
 
